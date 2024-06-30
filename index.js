@@ -15,7 +15,10 @@ app.use(express.static(path.join(__dirname, "public")));
 
 const {v4: uuidv4 } = require('uuid');
 
-const posts = [
+const  methodOverride = require("method-override")
+app.use(methodOverride("_method"))
+
+let posts = [
   {
     id: uuidv4(),
     username: "hassan", 
@@ -59,12 +62,12 @@ app.get("/posts/:id", (req, res) => {
   res.render("show", {post})
 })
 
-app.patch("/posts/:id/edit", (req, res) => {
+app.patch("/posts/:id", (req, res) => {
   const { id } = req.params;
   const  newContent  = req.body.content;
   const post = posts.find(post => post.id === id);
   post.content = newContent;
-  res.send(`patch request for ${id} and new contant is ${newContent}`);
+  res.redirect("/posts")
 })
 
 
@@ -73,4 +76,11 @@ app.get("/posts/:id/edit", (req, res) => {
   const post = posts.find(post => post.id === id);
 
   res.render("edit", {post} )
+})
+
+app.delete("/posts/:id", (req, res) => {
+  const { id } = req.params;
+  posts = posts.filter(post => post.id !== id);
+  res.redirect("/posts")
+  
 })
