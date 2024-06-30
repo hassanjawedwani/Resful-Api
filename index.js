@@ -13,16 +13,21 @@ app.set("views", path.join(__dirname, "views"))
 app.use(express.static(path.join(__dirname, "public")));
 
 
+const {v4: uuidv4 } = require('uuid');
+
 const posts = [
   {
+    id: uuidv4(),
     username: "hassan", 
     content: "blah blah blah"
   },
   {
+    id: uuidv4(),
     username: "numan",
     content: "blah blah blah blah blah"
   },
   {
+    id: uuidv4(),
     username: "sohail",
     content: "blah blah blah blah blah blah blah"
   },
@@ -38,8 +43,18 @@ app.get("/posts/new", (req, res) => {
 })
 
 app.post("/posts", (req, res) => {
-  // res.send("New Post Created Successfully");
-  posts.push(req.body);
+  const {username, content} = req.body;
+  const id = uuidv4();
+
+  posts.push({id, username, content});
+
   res.redirect("/posts");
 
+})
+
+app.get("/posts/:id", (req, res) => {
+  const { id } = req.params;
+  const post = posts.find(post => post.id === id);
+  console.log(post);
+  res.render("show.ejs", {post})
 })
